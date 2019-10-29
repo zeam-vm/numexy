@@ -62,7 +62,7 @@ defmodule NumexyTest do
     assert v.array == [-3, -2, -1]
     assert v.shape == [3]
     v = Numexy.sub(y, x)
-    assert v.array == [-3, -2, -1]
+    assert v.array == [3, 2, 1]
     assert v.shape == [3]
   end
 
@@ -83,7 +83,7 @@ defmodule NumexyTest do
     x = 4
     y = Numexy.new([[1, 2, 3], [4, 5, 6]])
     m = Numexy.sub(x, y)
-    assert m.array == [[-3, -2, -1], [0, 1, 2]]
+    assert m.array == [[3, 2, 1], [0, -1, -2]]
     assert m.shape == [2, 3]
   end
 
