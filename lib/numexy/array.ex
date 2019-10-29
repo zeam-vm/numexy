@@ -1,5 +1,5 @@
 defmodule Numexy.Array do
-  defstruct array: [], shape: {nil, nil}
+  defstruct array: [], shape: []
 
   @moduledoc """
   Documentation for Array.

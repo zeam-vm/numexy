@@ -6,13 +6,13 @@ defmodule NumexyTest do
   test "vector struct" do
     v = Numexy.new([1, 2, 3])
     assert v.array == [1, 2, 3]
-    assert v.shape == {3, nil}
+    assert v.shape == [3, nil]
   end
 
   test "matrix struct" do
     m = Numexy.new([[1, 2, 3], [1, 2, 3]])
     assert m.array == [[1, 2, 3], [1, 2, 3]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "add vector and scalar" do
@@ -20,10 +20,10 @@ defmodule NumexyTest do
     y = 4
     v = Numexy.add(x, y)
     assert v.array == [5, 6, 7]
-    assert v.shape == {3, nil}
+    assert v.shape == [3, nil]
     v = Numexy.add(y, x)
     assert v.array == [5, 6, 7]
-    assert v.shape == {3, nil}
+    assert v.shape == [3, nil]
   end
 
   test "add vector and vector" do
@@ -31,7 +31,7 @@ defmodule NumexyTest do
     y = Numexy.new([4, 5, 2])
     v = Numexy.add(x, y)
     assert v.array == [5, 7, 5]
-    assert v.shape == {3, nil}
+    assert v.shape == [3, nil]
   end
 
   test "add matrix and scalar" do
@@ -39,12 +39,12 @@ defmodule NumexyTest do
     y = 4
     m = Numexy.add(x, y)
     assert m.array == [[5, 6, 7], [8, 9, 10]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
     x = 4
     y = Numexy.new([[1, 2, 3], [4, 5, 6]])
     m = Numexy.add(x, y)
     assert m.array == [[5, 6, 7], [8, 9, 10]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "add matrix and matrix" do
@@ -52,7 +52,7 @@ defmodule NumexyTest do
     y = Numexy.new([[4, 5, 2], [1, 7, 3]])
     m = Numexy.add(x, y)
     assert m.array == [[5, 7, 5], [5, 12, 9]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "sub vector and scalar" do
@@ -60,10 +60,10 @@ defmodule NumexyTest do
     y = 4
     v = Numexy.sub(x, y)
     assert v.array == [-3, -2, -1]
-    assert v.shape == {3, nil}
+    assert v.shape == [3, nil]
     v = Numexy.sub(y, x)
     assert v.array == [-3, -2, -1]
-    assert v.shape == {3, nil}
+    assert v.shape == [3, nil]
   end
 
   test "sub vector and vector" do
@@ -71,7 +71,7 @@ defmodule NumexyTest do
     y = Numexy.new([4, 5, 2])
     v = Numexy.sub(x, y)
     assert v.array == [-3, -3, 1]
-    assert v.shape == {3, nil}
+    assert v.shape == [3, nil]
   end
 
   test "sub matrix and scalar" do
@@ -79,12 +79,12 @@ defmodule NumexyTest do
     y = 4
     m = Numexy.sub(x, y)
     assert m.array == [[-3, -2, -1], [0, 1, 2]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
     x = 4
     y = Numexy.new([[1, 2, 3], [4, 5, 6]])
     m = Numexy.sub(x, y)
     assert m.array == [[-3, -2, -1], [0, 1, 2]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "sub matrix and matrix" do
@@ -92,7 +92,7 @@ defmodule NumexyTest do
     y = Numexy.new([[4, 5, 2], [1, 7, 3]])
     m = Numexy.sub(x, y)
     assert m.array == [[-3, -3, 1], [3, -2, 3]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "multiplication vector and scalar" do
@@ -100,7 +100,7 @@ defmodule NumexyTest do
     y = 3
     v = Numexy.mul(x, y)
     assert v.array == [3, 6, 9]
-    assert v.shape == {3, nil}
+    assert v.shape == [3, nil]
   end
 
   test "multiplication vector and vector" do
@@ -108,7 +108,7 @@ defmodule NumexyTest do
     y = Numexy.new([4, 5, 2])
     v = Numexy.mul(x, y)
     assert v.array == [4, 10, 6]
-    assert v.shape == {3, nil}
+    assert v.shape == [3, nil]
   end
 
   test "multiplication matrix and scalar" do
@@ -116,12 +116,12 @@ defmodule NumexyTest do
     y = 4
     m = Numexy.mul(x, y)
     assert m.array == [[4, 8, 12], [16, 20, 24]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
     x = 4
     y = Numexy.new([[1, 2, 3], [4, 5, 6]])
     m = Numexy.mul(x, y)
     assert m.array == [[4, 8, 12], [16, 20, 24]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "multiplication matrix and matrix" do
@@ -129,7 +129,7 @@ defmodule NumexyTest do
     y = Numexy.new([[4, 5, 2], [1, 7, 3]])
     m = Numexy.mul(x, y)
     assert m.array == [[4, 10, 6], [4, 35, 18]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "div vector and scalar" do
@@ -137,7 +137,7 @@ defmodule NumexyTest do
     y = 3
     v = Numexy.div(x, y)
     assert v.array == [3.0, 2.0, 1.0]
-    assert v.shape == {3, nil}
+    assert v.shape == [3, nil]
   end
 
   test "div vector and vector" do
@@ -145,7 +145,7 @@ defmodule NumexyTest do
     y = Numexy.new([4, 5, 2])
     v = Numexy.div(x, y)
     assert v.array == [2.0, 2.0, 2.0]
-    assert v.shape == {3, nil}
+    assert v.shape == [3, nil]
   end
 
   test "div matrix and scalar" do
@@ -153,12 +153,12 @@ defmodule NumexyTest do
     y = 4
     m = Numexy.div(x, y)
     assert m.array == [[2.0, 1.0, 1.0], [1.0, 3.0, 2.0]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
     x = 4
     y = Numexy.new([[8, 4, 4], [4, 12, 8]])
     m = Numexy.div(x, y)
     assert m.array == [[2.0, 1.0, 1.0], [1.0, 3.0, 2.0]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "div matrix and matrix" do
@@ -166,7 +166,7 @@ defmodule NumexyTest do
     y = Numexy.new([[4, 5, 2], [1, 7, 3]])
     m = Numexy.div(x, y)
     assert m.array == [[2.0, 2.0, 3.0], [4.0, 1.0, 2.0]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "inner product (vector and vector)" do
@@ -180,7 +180,7 @@ defmodule NumexyTest do
     y = Numexy.new([1, 2, 3])
     m = Numexy.dot(x, y)
     assert m.array == [25, 35]
-    assert m.shape == {2, nil}
+    assert m.shape == [2, nil]
   end
 
   test "inner product (matrix and matrix)" do
@@ -188,38 +188,38 @@ defmodule NumexyTest do
     y = Numexy.new([[4, 3], [7, 5], [2, 7]])
     m = Numexy.dot(x, y)
     assert m.array == [[54, 61], [81, 86]]
-    assert m.shape == {2, 2}
+    assert m.shape == [2, 2]
   end
 
   test "transpose matrix." do
     x = Numexy.new([[4, 3], [7, 5], [2, 7]])
     m = Numexy.transpose(x)
     assert m.array == [[4, 7, 2], [3, 5, 7]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "matrix ones." do
-    m = Numexy.ones({2, 3})
+    m = Numexy.ones([2, 3])
     assert m.array == [[1, 1, 1], [1, 1, 1]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "vector ones." do
-    m = Numexy.ones({3, nil})
+    m = Numexy.ones([3, nil])
     assert m.array == [1, 1, 1]
-    assert m.shape == {3, nil}
+    assert m.shape == [3, nil]
   end
 
   test "matrix zeros." do
-    m = Numexy.zeros({2, 3})
+    m = Numexy.zeros([2, 3])
     assert m.array == [[0, 0, 0], [0, 0, 0]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "vector zeros." do
-    m = Numexy.zeros({3, nil})
+    m = Numexy.zeros([3, nil])
     assert m.array == [0, 0, 0]
-    assert m.shape == {3, nil}
+    assert m.shape == [3, nil]
   end
 
   test "vector sum." do
@@ -244,7 +244,7 @@ defmodule NumexyTest do
 
   test "vector get value" do
     v = Numexy.new([2, 9, 5])
-    assert 9 == Numexy.get(v, {2, nil})
+    assert 9 == Numexy.get(v, [2, nil])
   end
 
   test "test no arguments argmax." do
@@ -285,7 +285,7 @@ defmodule NumexyTest do
   test "test reshape" do
     m = Numexy.reshape([1, 2, 3, 4, 5, 6], 3)
     assert m.array == [[1, 2, 3], [4, 5, 6]]
-    assert m.shape == {2, 3}
+    assert m.shape == [2, 3]
   end
 
   test "test outer" do
@@ -293,12 +293,12 @@ defmodule NumexyTest do
     v2 = Numexy.new([4, 3, 2, 1])
     m = Numexy.outer(v1, v2)
     assert m.array == [[4, 3, 2, 1], [8, 6, 4, 2], [12, 9, 6, 3], [16, 12, 8, 4]]
-    assert m.shape == {4, 4}
+    assert m.shape == [4, 4]
 
     m1 = Numexy.new([[1, 2], [3, 4]])
     m2 = Numexy.new([[4, 3], [2, 1]])
     m = Numexy.outer(m1, m2)
     assert m.array == [[4, 3, 2, 1], [8, 6, 4, 2], [12, 9, 6, 3], [16, 12, 8, 4]]
-    assert m.shape == {4, 4}
+    assert m.shape == [4, 4]
   end
 end
