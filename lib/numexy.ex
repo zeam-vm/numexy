@@ -296,6 +296,10 @@ defmodule Numexy do
       %Array{array: [[1, 1, 1], [1, 1, 1]], shape: [2, 3]}
       iex> Numexy.ones([3, nil])
       %Array{array: [1, 1, 1], shape: [3, nil]}
+      iex> Numexy.ones({2, 3})
+      %Array{array: [[1, 1, 1], [1, 1, 1]], shape: [2, 3]}
+      iex> Numexy.ones({3, nil})
+      %Array{array: [1, 1, 1], shape: [3, nil]}
   """
   def ones([row, nil]) do
     List.duplicate(1, row)
@@ -308,6 +312,9 @@ defmodule Numexy do
     |> new
   end
 
+  def ones({row, nil}), do: ones([row, nil])
+  def ones({row, col}), do: ones([row, col])
+
   @doc """
   Create zeros matrix or vector.
 
@@ -316,6 +323,10 @@ defmodule Numexy do
       iex> Numexy.zeros([2, 3])
       %Numexy.Array{array: [[0, 0, 0], [0, 0, 0]], shape: [2, 3]}
       iex> Numexy.zeros([3, nil])
+      %Numexy.Array{array: [0, 0, 0], shape: [3, nil]}
+      iex> Numexy.zeros({2, 3})
+      %Numexy.Array{array: [[0, 0, 0], [0, 0, 0]], shape: [2, 3]}
+      iex> Numexy.zeros({3, nil})
       %Numexy.Array{array: [0, 0, 0], shape: [3, nil]}
   """
   def zeros([row, nil]) do
@@ -328,6 +339,9 @@ defmodule Numexy do
     |> List.duplicate(row)
     |> new
   end
+
+  def zeros({row, nil}), do: zeros([row, nil])
+  def zeros({row, col}), do: zeros([row, col])
 
   @doc """
   Sum matrix or vector.
@@ -384,9 +398,15 @@ defmodule Numexy do
       9
       iex> Numexy.new([[1,2,3],[4,5,6]]) |> Numexy.get([2, 1])
       4
+      iex> Numexy.new([2,9,5]) |> Numexy.get({2, nil})
+      9
+      iex> Numexy.new([[1,2,3],[4,5,6]]) |> Numexy.get({2, 1})
+      4
   """
   def get(%Array{array: v, shape: [_, nil]}, [row, nil]), do: Enum.at(v, row - 1)
   def get(%Array{array: m, shape: _}, [row, col]), do: Enum.at(m, row - 1) |> Enum.at(col - 1)
+  def get(%Array{array: v, shape: [_, nil]}, {row, nil}), do: Enum.at(v, row - 1)
+  def get(%Array{array: m, shape: _}, {row, col}), do: Enum.at(m, row - 1) |> Enum.at(col - 1)
 
   @doc """
   Get index of max value.
