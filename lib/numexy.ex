@@ -52,7 +52,7 @@ defmodule Numexy do
       iex> Numexy.add(x, y)
       %Numexy.Array{
               array: [[[5, 6], [7, 8]], [[9, 10], [11, 12]], [[13, 14], [15, 16]]],
-              shape: [3 , 2, 2]
+              shape: [3, 2, 2]
             }
 
   """
@@ -70,7 +70,7 @@ defmodule Numexy do
     |> chunk(tl(shape))
     |> new
   end
-  
+
   def add(l) when is_list(l) do
     Enum.reduce(l, fn x, acc -> add(acc, x) end)
   end
