@@ -59,10 +59,10 @@ defmodule Numexy do
   def add(s, t) when is_number(s) and is_number(t), do: s + t
 
   def add(%Array{array: v, shape: shape}, s) when is_number(s),
-    do: v |> List.flatten |> Enum.map(&(&1 + s)) |> chunk(tl(shape)) |> new
+    do: v |> List.flatten() |> Enum.map(&(&1 + s)) |> chunk(tl(shape)) |> new
 
   def add(s, %Array{array: v, shape: shape}) when is_number(s),
-    do: v |> List.flatten |> Enum.map(&(s + &1)) |> chunk(tl(shape)) |> new
+    do: v |> List.flatten() |> Enum.map(&(s + &1)) |> chunk(tl(shape)) |> new
 
   def add(%Array{array: x, shape: shape}, %Array{array: y, shape: shape}) do
     Enum.zip(List.flatten(x), List.flatten(y))
@@ -76,6 +76,7 @@ defmodule Numexy do
   end
 
   defp chunk(list, []), do: list
+
   defp chunk(list, [head | tail]) do
     Enum.chunk_every(chunk(list, tail), head)
   end
