@@ -21,6 +21,7 @@ defmodule Numexy do
   defp count_list(array) when is_list(array) do
     [Enum.count(array) | count_list(hd(array))]
   end
+
   defp count_list(_) do
     []
   end
@@ -42,24 +43,22 @@ defmodule Numexy do
   def add(s, %Array{array: v, shape: [_]}) when is_number(s),
     do: Enum.map(v, &(&1 + s)) |> new
 
-  def add(%Array{array: xv, shape: [xv_row]}, %Array{array: yv, shape: [yv_row]})
-      when xv_row == yv_row do
+  def add(%Array{array: xv, shape: [row]}, %Array{array: yv, shape: [row]}) do
     # vector + vector
     Enum.zip(xv, yv)
     |> Enum.map(fn {a, b} -> a + b end)
     |> new
   end
 
-  def add(%Array{array: xm, shape: xm_shape}, %Array{array: ym, shape: ym_shape})
-      when xm_shape == ym_shape do
+  def add(%Array{array: xm, shape: shape}, %Array{array: ym, shape: shape}) do
     # matrix + matrix
-    [_, xm_col] = xm_shape
+    [_, col] = shape
     xv = List.flatten(xm)
     yv = List.flatten(ym)
 
     Enum.zip(xv, yv)
     |> Enum.map(fn {a, b} -> a + b end)
-    |> Enum.chunk_every(xm_col)
+    |> Enum.chunk_every(col)
     |> new
   end
 
@@ -92,24 +91,22 @@ defmodule Numexy do
   def sub(s, %Array{array: v, shape: [_]}) when is_number(s),
     do: Enum.map(v, &(&1 - s)) |> new
 
-  def sub(%Array{array: xv, shape: [xv_row]}, %Array{array: yv, shape: [yv_row]})
-      when xv_row == yv_row do
+  def sub(%Array{array: xv, shape: [row]}, %Array{array: yv, shape: [row]}) do
     # vector + vector
     Enum.zip(xv, yv)
     |> Enum.map(fn {a, b} -> a - b end)
     |> new
   end
 
-  def sub(%Array{array: xm, shape: xm_shape}, %Array{array: ym, shape: ym_shape})
-      when xm_shape == ym_shape do
+  def sub(%Array{array: xm, shape: shape}, %Array{array: ym, shape: shape}) do
     # matrix + matrix
-    [_, xm_col] = xm_shape
+    [_, col] = shape
     xv = List.flatten(xm)
     yv = List.flatten(ym)
 
     Enum.zip(xv, yv)
     |> Enum.map(fn {a, b} -> a - b end)
-    |> Enum.chunk_every(xm_col)
+    |> Enum.chunk_every(col)
     |> new
   end
 
@@ -142,24 +139,22 @@ defmodule Numexy do
   def mul(s, %Array{array: v, shape: [_]}) when is_number(s),
     do: Enum.map(v, &(&1 * s)) |> new
 
-  def mul(%Array{array: xv, shape: [xv_row]}, %Array{array: yv, shape: [yv_row]})
-      when xv_row == yv_row do
+  def mul(%Array{array: xv, shape: [row]}, %Array{array: yv, shape: [row]}) do
     # vector + vector
     Enum.zip(xv, yv)
     |> Enum.map(fn {a, b} -> a * b end)
     |> new
   end
 
-  def mul(%Array{array: xm, shape: xm_shape}, %Array{array: ym, shape: ym_shape})
-      when xm_shape == ym_shape do
+  def mul(%Array{array: xm, shape: shape}, %Array{array: ym, shape: shape}) do
     # matrix + matrix
-    [_, xm_col] = xm_shape
+    [_, col] = shape
     xv = List.flatten(xm)
     yv = List.flatten(ym)
 
     Enum.zip(xv, yv)
     |> Enum.map(fn {a, b} -> a * b end)
-    |> Enum.chunk_every(xm_col)
+    |> Enum.chunk_every(col)
     |> new
   end
 
@@ -192,24 +187,22 @@ defmodule Numexy do
   def div(s, %Array{array: v, shape: [_]}) when is_number(s),
     do: Enum.map(v, &(&1 / s)) |> new
 
-  def div(%Array{array: xv, shape: [xv_row]}, %Array{array: yv, shape: [yv_row]})
-      when xv_row == yv_row do
+  def div(%Array{array: xv, shape: [row]}, %Array{array: yv, shape: [row]}) do
     # vector + vector
     Enum.zip(xv, yv)
     |> Enum.map(fn {a, b} -> a / b end)
     |> new
   end
 
-  def div(%Array{array: xm, shape: xm_shape}, %Array{array: ym, shape: ym_shape})
-      when xm_shape == ym_shape do
+  def div(%Array{array: xm, shape: shape}, %Array{array: ym, shape: shape}) do
     # matrix + matrix
-    [_, xm_col] = xm_shape
+    [_, col] = shape
     xv = List.flatten(xm)
     yv = List.flatten(ym)
 
     Enum.zip(xv, yv)
     |> Enum.map(fn {a, b} -> a / b end)
-    |> Enum.chunk_every(xm_col)
+    |> Enum.chunk_every(col)
     |> new
   end
 
@@ -237,14 +230,12 @@ defmodule Numexy do
       iex> Numexy.dot(x, y)
       14
   """
-  def dot(%Array{array: xv, shape: [xv_row]}, %Array{array: yv, shape: [yv_row]})
-      when xv_row == yv_row do
+  def dot(%Array{array: xv, shape: [row]}, %Array{array: yv, shape: [row]}) do
     # vector * vector return scalar
     dot_vector(xv, yv)
   end
 
-  def dot(%Array{array: m, shape: [_, m_col]}, %Array{array: v, shape: [v_row]})
-      when m_col == v_row do
+  def dot(%Array{array: m, shape: [_, mv]}, %Array{array: v, shape: [mv]}) do
     # matrix * vector return vector
     m = for mi <- m, vi <- [v], do: [mi, vi]
 
@@ -253,8 +244,7 @@ defmodule Numexy do
     |> new
   end
 
-  def dot(%Array{array: xm, shape: [x_row, x_col]}, %Array{array: ym, shape: [y_row, _]})
-      when x_col == y_row do
+  def dot(%Array{array: xm, shape: [x_row, xy]}, %Array{array: ym, shape: [xy, _]}) do
     # matrix * matrix return matrix
     m = for xi <- xm, yi <- list_transpose(ym), do: [xi, yi]
 
