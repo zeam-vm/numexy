@@ -31,47 +31,53 @@ defmodule Numexy do
 
   ## Examples
 
+      iex> Numexy.add(1, 2)
+      3
+
+      iex> Numexy.add([1, 2])
+      3
+
       iex> x = Numexy.new([1,2,3])
       %Numexy.Array{array: [1,2,3], shape: [3]}
       iex> y = 4
       iex> Numexy.add(x, y)
       %Numexy.Array{array: [5,6,7], shape: [3]}
+
+      iex> x = Numexy.new([[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 10], [11, 12]]])
+      %Numexy.Array{
+              array: [[[1, 2], [3, 4]], [[5, 6], [7, 8]], [[9, 10], [11, 12]]],
+              shape: [3, 2, 2]
+            }
+      iex> y = 4
+      iex> Numexy.add(x, y)
+      %Numexy.Array{
+              array: [[[5, 6], [7, 8]], [[9, 10], [11, 12]], [[13, 14], [15, 16]]],
+              shape: [3 , 2, 2]
+            }
+
   """
-  def add(%Array{array: v, shape: [_]}, s) when is_number(s),
-    do: Enum.map(v, &(&1 + s)) |> new
+  def add(s, t) when is_number(s) and is_number(t), do: s + t
 
-  def add(s, %Array{array: v, shape: [_]}) when is_number(s),
-    do: Enum.map(v, &(&1 + s)) |> new
+  def add(%Array{array: v, shape: shape}, s) when is_number(s),
+    do: v |> List.flatten |> Enum.map(&(&1 + s)) |> chunk(tl(shape)) |> new
 
-  def add(%Array{array: xv, shape: [row]}, %Array{array: yv, shape: [row]}) do
-    # vector + vector
-    Enum.zip(xv, yv)
+  def add(s, %Array{array: v, shape: shape}) when is_number(s),
+    do: v |> List.flatten |> Enum.map(&(s + &1)) |> chunk(tl(shape)) |> new
+
+  def add(%Array{array: x, shape: shape}, %Array{array: y, shape: shape}) do
+    Enum.zip(List.flatten(x), List.flatten(y))
     |> Enum.map(fn {a, b} -> a + b end)
+    |> chunk(tl(shape))
     |> new
   end
-
-  def add(%Array{array: xm, shape: shape}, %Array{array: ym, shape: shape}) do
-    # matrix + matrix
-    [_, col] = shape
-    xv = List.flatten(xm)
-    yv = List.flatten(ym)
-
-    Enum.zip(xv, yv)
-    |> Enum.map(fn {a, b} -> a + b end)
-    |> Enum.chunk_every(col)
-    |> new
+  
+  def add(l) when is_list(l) do
+    Enum.reduce(l, fn x, acc -> add(acc, x) end)
   end
 
-  def add(%Array{array: m, shape: [_, _]}, s) do
-    m
-    |> Enum.map(&Enum.map(&1, fn x -> x + s end))
-    |> new
-  end
-
-  def add(s, %Array{array: m, shape: [_, _]}) do
-    m
-    |> Enum.map(&Enum.map(&1, fn x -> x + s end))
-    |> new
+  defp chunk(list, []), do: list
+  defp chunk(list, [head | tail]) do
+    Enum.chunk_every(chunk(list, tail), head)
   end
 
   @doc """
