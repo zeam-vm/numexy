@@ -10,12 +10,17 @@ defmodule Numexy do
 
   ## Examples
 
+      iex> Numexy.new(1)
+      1
+
       iex> Numexy.new([1,2,3])
       %Numexy.Array{array: [1, 2, 3], shape: [3]}
       iex> Numexy.new([[1,2,3],[1,2,3]])
       %Numexy.Array{array: [[1, 2, 3], [1, 2, 3]], shape: [2, 3]}
 
   """
+  def new(num) when is_number(num), do: num
+
   def new(array), do: %Array{array: array, shape: count_list(array)}
 
   defp count_list(array) when is_list(array) do
@@ -176,41 +181,125 @@ defmodule Numexy do
 
   ## Examples
 
+      iex> Numexy.dot(1, 1)
+      1
+
+      iex> Numexy.dot([1, 2, 3], 1)
+      %Numexy.Array{array: [1,2,3], shape: [3]}
+
       iex> x = Numexy.new([1,2,3])
       %Numexy.Array{array: [1,2,3], shape: [3]}
       iex> y = Numexy.new([1,2,3])
       %Numexy.Array{array: [1,2,3], shape: [3]}
       iex> Numexy.dot(x, y)
       14
+
+      iex> Numexy.dot([1, 2, 3], [4, 5, 6])
+      32
+
+      iex> Numexy.dot([1, 2, 3], [[4, 5], [6, 7], [8, 9]])
+      %Numexy.Array{array: [40, 46], shape: [2]}    
   """
-  def dot(%Array{array: xv, shape: [row]}, %Array{array: yv, shape: [row]}) do
-    # vector * vector return scalar
-    dot_vector(xv, yv)
+  def dot(s, t) when is_number(s) and is_number(t), do: s * t
+
+  def dot(l, s) when is_list(l) and is_number(s), do: dot(l |> new, s)
+
+  def dot(s, l) when is_number(s) and is_list(l), do: dot(s, l |> new)
+
+  def dot(l1, l2) when is_list(l1) and is_list(l2), do: dot(l1 |> new, l2 |> new)
+ 
+  def dot(%Array{array: l, shape: shape}, s) when is_number(s),
+    do: l |> List.flatten() |> Enum.map(&(&1 * s)) |> chunk(tl(shape)) |> new
+
+  def dot(s, %Array{array: l, shape: shape}) when is_number(s),
+    do: l |> List.flatten() |> Enum.map(&(s * &1)) |> chunk(tl(shape)) |> new
+
+  def dot(%Array{array: l1, shape: shape1}, %Array{array: l2, shape: shape2}) do
+    if(List.last(shape1) == hd(shape2)) do
+      dot_sub(l1, l2) |> new
+    else
+      raise(FunctionClauseError, "no function clause matching in Numexy.dot/2")
+    end
   end
 
-  def dot(%Array{array: m, shape: [_, mv]}, %Array{array: v, shape: [mv]}) do
-    # matrix * vector return vector
-    m = for mi <- m, vi <- [v], do: [mi, vi]
+  defp dot_sub(s) when is_number(s), do: s
 
-    m
-    |> Enum.map(fn [x, y] -> dot_vector(x, y) end)
-    |> new
+  defp dot_sub({s1, s2}) do
+    dot_sub(s1, s2)
   end
 
-  def dot(%Array{array: xm, shape: [x_row, xy]}, %Array{array: ym, shape: [xy, _]}) do
-    # matrix * matrix return matrix
-    m = for xi <- xm, yi <- list_transpose(ym), do: [xi, yi]
-
-    m
-    |> Enum.map(fn [x, y] -> dot_vector(x, y) end)
-    |> Enum.chunk_every(x_row)
-    |> new
+  defp dot_sub(l) when is_list(l) and is_number(hd(l)) do
+    Enum.sum(l)
   end
 
-  defp dot_vector(xv, yv) do
-    Enum.zip(xv, yv)
-    |> Enum.reduce(0, fn {a, b}, acc -> a * b + acc end)
+  defp dot_sub(l) when is_list(l) and not(is_number(hd(l))) do
+    l |> Enum.map(& dot_sub(&1)) |> dot_sub()
   end
+
+  defp dot_sub(s1, s2) when is_number(s1) and is_number(s2), do: s1 * s2
+
+  defp dot_sub(l, s) when is_number(hd(l)) and is_number(s) do
+    
+  end
+
+  defp dot_sub(l1, l2) when is_number(hd(l1)) and is_number(hd(l2)) do
+    Enum.zip(l1, l2)
+    |> Enum.map(& Tuple.to_list(&1))
+    |> Enum.map(& Enum.reduce(&1, fn x, acc -> acc * x end))
+    |> Enum.sum
+  end
+
+  defp dot_sub(l1, l2) when is_number(hd(l1)) and is_list(hd(l2)) do
+    tl2 = Enum.zip(l2) |> Enum.map(& Tuple.to_list(&1))
+    tl2
+    |> Enum.map(& Enum.zip(l1, &1)) 
+    |> Enum.map(& dot_sub(&1))
+  end
+
+  defp dot_sub(l1, l2) when is_list(hd(l1)) and is_number(hd(l2)) do
+    l1
+    |> Enum.map(& Enum.zip(&1, l2)) 
+    |> Enum.map(& dot_sub(&1))
+  end
+
+  defp dot_sub(l1, l2) when is_list(hd(l1)) and is_list(hd(l2)) do
+    tl2 = Enum.zip(l2) |> Enum.map(& Tuple.to_list(&1))
+
+    ll1 = List.duplicate(l1, length(l1))
+
+    ll2 = List.duplicate(tl2, length(tl2)) |> rotate_sub()
+
+    dot_sub_sub(ll1, ll2)
+    |> map_map_sum()
+    |> Enum.zip()
+    |> Enum.map(& Tuple.to_list(&1))
+    |> rotate_sub()
+  end
+
+  defp rotate_sub(l) do
+    l
+    |> Enum.with_index()
+    |> Enum.map(fn {l, i} -> l |> rotate(i) end)
+  end
+
+  defp rotate(l, 0), do: l
+  defp rotate([head | tail] , n) when n > 0 do
+    rotate(tail ++ [head], n - 1)
+  end
+
+  defp dot_sub_sub(l1, l2) when is_number(l1) and is_number(l2), do: l1 * l2
+  defp dot_sub_sub(l1, l2) when is_list(l1) and is_list(l2) do
+    Enum.zip(l1, l2)
+    |> Enum.map(fn {ll1, ll2} -> dot_sub_sub(ll1, ll2) end)
+  end
+
+  defp map_map_sum(l) when is_list(hd(l)) do
+    l |> Enum.map(& map_map_sum(&1))
+  end
+  defp map_map_sum(l) when is_number(hd(l)) do
+    l |> Enum.sum
+  end
+
 
   @doc """
   Calculate transpose matrix.
