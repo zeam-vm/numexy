@@ -238,10 +238,6 @@ defmodule Numexy do
 
   defp dot_sub(s1, s2) when is_number(s1) and is_number(s2), do: s1 * s2
 
-  defp dot_sub(l, s) when is_number(hd(l)) and is_number(s) do
-    
-  end
-
   defp dot_sub(l1, l2) when is_number(hd(l1)) and is_number(hd(l2)) do
     Enum.zip(l1, l2)
     |> Enum.map(& Tuple.to_list(&1))
@@ -250,7 +246,7 @@ defmodule Numexy do
   end
 
   defp dot_sub(l1, l2) when is_number(hd(l1)) and is_list(hd(l2)) do
-    tl2 = Enum.zip(l2) |> Enum.map(& Tuple.to_list(&1))
+    tl2 = list_transpose(l2)
     tl2
     |> Enum.map(& Enum.zip(l1, &1)) 
     |> Enum.map(& dot_sub(&1))
@@ -263,7 +259,7 @@ defmodule Numexy do
   end
 
   defp dot_sub(l1, l2) when is_list(hd(l1)) and is_list(hd(l2)) do
-    tl2 = Enum.zip(l2) |> Enum.map(& Tuple.to_list(&1))
+    tl2 = list_transpose(l2)
 
     ll1 = List.duplicate(l1, length(l1))
 
@@ -271,8 +267,7 @@ defmodule Numexy do
 
     dot_sub_sub(ll1, ll2)
     |> map_map_sum()
-    |> Enum.zip()
-    |> Enum.map(& Tuple.to_list(&1))
+    |> list_transpose()
     |> rotate_sub()
   end
 
