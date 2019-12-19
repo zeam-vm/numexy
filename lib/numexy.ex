@@ -609,4 +609,28 @@ defmodule Numexy do
       _ -> power_sub({r * x, x * x, n >>> 1})
     end
   end
+
+  @doc """
+  Calculate polynomial.
+
+  ## Examples
+
+  iex> Numexy.poly1d([1.0, 2.0, 3.0]).(0.5)
+  4.25
+  """
+  def poly1d(a) when is_list(a) do
+    fn x -> horner({0.0, a, x, Enum.count(a)}) |> elem(0) end
+  end
+
+  defp horner({_, [], _, 0}) do
+    {0, [], 0, 0}
+  end
+
+  defp horner({y, [a], x, 1}) do
+    {y * x + a, [], x, 0}
+  end
+
+  defp horner({y, [head | tail], x, k}) do
+    horner({y * x + head, tail, x, k - 1})
+  end
 end
