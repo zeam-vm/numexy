@@ -1,5 +1,6 @@
 defmodule Numexy do
   alias Numexy.Array
+  use Bitwise
 
   @moduledoc """
   Documentation for Numexy.
@@ -574,4 +575,32 @@ defmodule Numexy do
     Enum.map(list1, &Enum.map(list2, fn x -> x * &1 end))
     |> new
   end
+  
+  @doc """
+  Calculate power in integer.
+
+  ## Examples
+
+ 	iex> Numexy.power(4, 3)
+ 	64
+
+  """
+  def power(_x, 0), do: 1
+  def power(x, 1), do: x
+  def power(x, n) when is_integer(n) and n > 1 do
+  	power_sub({1, x, n}) |> elem(0)
+  end
+
+  defp power_sub({r, x, 0}) do
+  	{r, x, 0}
+  end
+  defp power_sub({r, x, 1}) do
+  	power_sub({r * x, x * x, 0})
+  end 
+  defp power_sub({r, x, n}) do
+  	case n &&& 1 do
+  		0 -> power_sub({r, x * x, n >>> 1})
+		_ -> power_sub({r * x, x * x, n >>> 1})
+	end
+  end 
 end
