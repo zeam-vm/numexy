@@ -592,11 +592,11 @@ defmodule Numexy do
   def power(x, 1), do: x
 
   def power(x, n) when is_integer(n) and n > 1 do
-    power_sub(1, x, n) |> elem(0)
+    power_sub(1, x, n)
   end
 
-  defp power_sub(r, x, 0) do
-    {r, x, 0}
+  defp power_sub(r, _, 0) do
+    r
   end
 
   defp power_sub(r, x, 1) do
