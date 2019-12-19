@@ -592,22 +592,26 @@ defmodule Numexy do
   def power(x, 1), do: x
 
   def power(x, n) when is_integer(n) and n > 1 do
-    power_sub({1, x, n}) |> elem(0)
+    power_sub(1, x, n) |> elem(0)
   end
 
-  defp power_sub({r, x, 0}) do
+  defp power_sub(r, x, 0) do
     {r, x, 0}
   end
 
-  defp power_sub({r, x, 1}) do
-    power_sub({r * x, x * x, 0})
+  defp power_sub(r, x, 1) do
+    power_sub(r * x, x * x, 0)
   end
 
-  defp power_sub({r, x, n}) do
-    case n &&& 1 do
-      0 -> power_sub({r, x * x, n >>> 1})
-      _ -> power_sub({r * x, x * x, n >>> 1})
-    end
+  defp power_sub(r, x, n) do
+    power_sub(
+      case n &&& 1 do
+        0 -> r
+        _ -> r * x
+      end,
+      x * x,
+      n >>> 1
+    )
   end
 
   @doc """
