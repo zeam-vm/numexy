@@ -157,7 +157,7 @@ defmodule NumexyTest do
     x = 4
     y = Numexy.new([[8, 4, 4], [4, 12, 8]])
     m = Numexy.div(x, y)
-    assert m.array == [[0.5, 1.0, 1.0], [1.0, 1.0/3.0, 0.5]]
+    assert m.array == [[0.5, 1.0, 1.0], [1.0, 1.0 / 3.0, 0.5]]
     assert m.shape == [2, 3]
   end
 

@@ -208,7 +208,7 @@ defmodule Numexy do
   def dot(s, l) when is_number(s) and is_list(l), do: dot(s, l |> new)
 
   def dot(l1, l2) when is_list(l1) and is_list(l2), do: dot(l1 |> new, l2 |> new)
- 
+
   def dot(%Array{array: l, shape: shape}, s) when is_number(s),
     do: l |> List.flatten() |> Enum.map(&(&1 * s)) |> chunk(tl(shape)) |> new
 
@@ -233,30 +233,31 @@ defmodule Numexy do
     Enum.sum(l)
   end
 
-  defp dot_sub(l) when is_list(l) and not(is_number(hd(l))) do
-    l |> Enum.map(& dot_sub(&1)) |> dot_sub()
+  defp dot_sub(l) when is_list(l) and not is_number(hd(l)) do
+    l |> Enum.map(&dot_sub(&1)) |> dot_sub()
   end
 
   defp dot_sub(s1, s2) when is_number(s1) and is_number(s2), do: s1 * s2
 
   defp dot_sub(l1, l2) when is_number(hd(l1)) and is_number(hd(l2)) do
     Enum.zip(l1, l2)
-    |> Enum.map(& Tuple.to_list(&1))
-    |> Enum.map(& Enum.reduce(&1, fn x, acc -> acc * x end))
-    |> Enum.sum
+    |> Enum.map(&Tuple.to_list(&1))
+    |> Enum.map(&Enum.reduce(&1, fn x, acc -> acc * x end))
+    |> Enum.sum()
   end
 
   defp dot_sub(l1, l2) when is_number(hd(l1)) and is_list(hd(l2)) do
     tl2 = list_transpose(l2)
+
     tl2
-    |> Enum.map(& Enum.zip(l1, &1)) 
-    |> Enum.map(& dot_sub(&1))
+    |> Enum.map(&Enum.zip(l1, &1))
+    |> Enum.map(&dot_sub(&1))
   end
 
   defp dot_sub(l1, l2) when is_list(hd(l1)) and is_number(hd(l2)) do
     l1
-    |> Enum.map(& Enum.zip(&1, l2)) 
-    |> Enum.map(& dot_sub(&1))
+    |> Enum.map(&Enum.zip(&1, l2))
+    |> Enum.map(&dot_sub(&1))
   end
 
   defp dot_sub(l1, l2) when is_list(hd(l1)) and is_list(hd(l2)) do
@@ -279,23 +280,25 @@ defmodule Numexy do
   end
 
   defp rotate(l, 0), do: l
-  defp rotate([head | tail] , n) when n > 0 do
+
+  defp rotate([head | tail], n) when n > 0 do
     rotate(tail ++ [head], n - 1)
   end
 
   defp dot_sub_sub(l1, l2) when is_number(l1) and is_number(l2), do: l1 * l2
+
   defp dot_sub_sub(l1, l2) when is_list(l1) and is_list(l2) do
     Enum.zip(l1, l2)
     |> Enum.map(fn {ll1, ll2} -> dot_sub_sub(ll1, ll2) end)
   end
 
   defp map_map_sum(l) when is_list(hd(l)) do
-    l |> Enum.map(& map_map_sum(&1))
-  end
-  defp map_map_sum(l) when is_number(hd(l)) do
-    l |> Enum.sum
+    l |> Enum.map(&map_map_sum(&1))
   end
 
+  defp map_map_sum(l) when is_number(hd(l)) do
+    l |> Enum.sum()
+  end
 
   @doc """
   Calculate transpose matrix.
@@ -575,32 +578,35 @@ defmodule Numexy do
     Enum.map(list1, &Enum.map(list2, fn x -> x * &1 end))
     |> new
   end
-  
+
   @doc """
   Calculate power in integer.
 
   ## Examples
 
- 	iex> Numexy.power(4, 3)
- 	64
+  iex> Numexy.power(4, 3)
+  64
 
   """
   def power(_x, 0), do: 1
   def power(x, 1), do: x
+
   def power(x, n) when is_integer(n) and n > 1 do
-  	power_sub({1, x, n}) |> elem(0)
+    power_sub({1, x, n}) |> elem(0)
   end
 
   defp power_sub({r, x, 0}) do
-  	{r, x, 0}
+    {r, x, 0}
   end
+
   defp power_sub({r, x, 1}) do
-  	power_sub({r * x, x * x, 0})
-  end 
+    power_sub({r * x, x * x, 0})
+  end
+
   defp power_sub({r, x, n}) do
-  	case n &&& 1 do
-  		0 -> power_sub({r, x * x, n >>> 1})
-		_ -> power_sub({r * x, x * x, n >>> 1})
-	end
-  end 
+    case n &&& 1 do
+      0 -> power_sub({r, x * x, n >>> 1})
+      _ -> power_sub({r * x, x * x, n >>> 1})
+    end
+  end
 end
