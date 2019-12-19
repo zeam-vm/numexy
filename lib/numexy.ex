@@ -619,18 +619,6 @@ defmodule Numexy do
   4.25
   """
   def poly1d(a) when is_list(a) do
-    fn x -> horner({0.0, a, x, Enum.count(a)}) |> elem(0) end
-  end
-
-  defp horner({_, [], _, 0}) do
-    {0, [], 0, 0}
-  end
-
-  defp horner({y, [a], x, 1}) do
-    {y * x + a, [], x, 0}
-  end
-
-  defp horner({y, [head | tail], x, k}) do
-    horner({y * x + head, tail, x, k - 1})
+    fn x -> Enum.reduce(a, 0, fn a_k, y -> y * x + a_k end) end
   end
 end
