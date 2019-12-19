@@ -599,10 +599,6 @@ defmodule Numexy do
     r
   end
 
-  defp power_sub(r, x, 1) do
-    power_sub(r * x, x * x, 0)
-  end
-
   defp power_sub(r, x, n) do
     power_sub(
       case n &&& 1 do
